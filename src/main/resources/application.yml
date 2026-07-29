@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: credit-service
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          public-key-location: classpath:keys/public-key.pem
+
+security:
+  jwt:
+    issuer: apigateway
+    secret: McHowHFh9zfPUjAu6VdpgKm+zzOTzrpNmElKZana3RM= #.env
+
