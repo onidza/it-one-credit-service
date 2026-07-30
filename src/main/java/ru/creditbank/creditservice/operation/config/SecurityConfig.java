@@ -7,6 +7,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -48,5 +50,21 @@ public class SecurityConfig {
                 )
 
                 .build();
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter converter =
+                new JwtGrantedAuthoritiesConverter();
+
+        converter.setAuthoritiesClaimName("authorities");
+        converter.setAuthorityPrefix("");
+
+        JwtAuthenticationConverter authenticationConverter =
+                new JwtAuthenticationConverter();
+
+        authenticationConverter.setJwtGrantedAuthoritiesConverter(converter);
+
+        return authenticationConverter;
     }
 }
