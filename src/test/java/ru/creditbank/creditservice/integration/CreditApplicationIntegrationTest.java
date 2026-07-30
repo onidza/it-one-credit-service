@@ -1,10 +1,11 @@
-package ru.creditbank.creditservice;
+package ru.creditbank.creditservice.integration;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import ru.creditbank.creditservice.config.TestcontainersConfiguration;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRequestDTO;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationResponseDTO;
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
-class CreditServiceApplicationTests {
+class CreditApplicationIntegrationTest {
 
     @Autowired
     private CreditCreateService creditCreateService;

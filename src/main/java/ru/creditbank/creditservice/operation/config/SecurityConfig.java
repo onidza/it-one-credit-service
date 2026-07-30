@@ -36,7 +36,7 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 HttpMethod.POST, "/credit-service/api/v1/credit"
-                        ).authenticated()
+                        ).hasRole("USER")
 
                         .anyRequest().denyAll()
                 )

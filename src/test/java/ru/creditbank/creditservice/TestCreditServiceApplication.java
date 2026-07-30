@@ -1,6 +1,7 @@
 package ru.creditbank.creditservice;
 
 import org.springframework.boot.SpringApplication;
+import ru.creditbank.creditservice.config.TestcontainersConfiguration;
 
 public class TestCreditServiceApplication {
 
