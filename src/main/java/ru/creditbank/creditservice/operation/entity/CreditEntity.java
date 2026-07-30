@@ -32,9 +32,7 @@ public class CreditEntity {
 
     @Column(
             name = "requested_amount",
-            nullable = false,
-            precision = 15,
-            scale = 2
+            nullable = false
     )
     private BigDecimal requestedAmount;
 
