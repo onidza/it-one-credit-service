@@ -1,4 +1,4 @@
-package ru.creditbank.creditservice.operation.dto;
+package ru.creditbank.creditservice.operation.dto.application;
 
 import ru.creditbank.creditservice.operation.entity.Status;
 

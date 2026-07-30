@@ -30,11 +30,12 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
+                                "/v3/api-docs.yaml",
                                 "/error"
                         ).permitAll()
 
                         .requestMatchers(
-                                HttpMethod.POST, "/credit-service/api/v1/credit/"
+                                HttpMethod.POST, "/credit-service/api/v1/credit"
                         ).authenticated()
 
                         .anyRequest().denyAll()

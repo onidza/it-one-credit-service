@@ -5,14 +5,22 @@ spring:
   application:
     name: credit-service
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          public-key-location: classpath:keys/public-key.pem
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show_sql: true
+
+    properties:
+      hibernate:
+        default_batch_fetch_size: 20
+        jdbc:
+          batch_size: 50
+
+logging:
+  level:
+    org.springframework.security: DEBUG
 
 security:
   jwt:
-    issuer: apigateway
+    issuer: apigateway #.env
     secret: McHowHFh9zfPUjAu6VdpgKm+zzOTzrpNmElKZana3RM= #.env
-

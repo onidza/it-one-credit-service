@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.creditbank.creditservice.operation.dto.CreditApplicationRequestDTO;
-import ru.creditbank.creditservice.operation.dto.CreditApplicationResponseDTO;
+import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRequestDTO;
+import ru.creditbank.creditservice.operation.dto.application.CreditApplicationResponseDTO;
 import ru.creditbank.creditservice.operation.service.CreditCreateService;
+
+import java.util.Objects;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -29,10 +32,15 @@ public class CreditApplicationController {
     ) {
         log.info("Received credit application request");
 
+        UUID userId = UUID.fromString(
+                Objects.requireNonNull(accessToken.getClaimAsString("user_id"))
+        );
+
         CreditApplicationResponseDTO response = creditCreateService
                 .createApplication(
                         request,
-                        accessToken.getClaim("user_id"));
+                        userId
+                );
 
         return ResponseEntity.ok(response);
     }

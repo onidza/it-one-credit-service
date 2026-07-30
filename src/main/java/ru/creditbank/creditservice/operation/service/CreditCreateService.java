@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
 import ru.creditbank.creditservice.operation.exception.DuplicateCreditApplicationException;
-import ru.creditbank.creditservice.operation.dto.CreditApplicationRequestDTO;
-import ru.creditbank.creditservice.operation.dto.CreditApplicationResponseDTO;
+import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRequestDTO;
+import ru.creditbank.creditservice.operation.dto.application.CreditApplicationResponseDTO;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
 
 import java.time.Duration;
