@@ -61,6 +61,19 @@ public class CreditEntity {
   @Column(name = "last_updated", nullable = false)
   private Instant lastUpdated;
 
+  @Column(
+      name = "interest_rate",
+      precision = 5,
+      scale = 2
+  )
+  private BigDecimal interestRate;
+
+  @Column(
+      name = "manager_comment",
+      length = 500
+  )
+  private String managerComment;
+
   public CreditEntity(
       UUID userId,
       String userFullName,

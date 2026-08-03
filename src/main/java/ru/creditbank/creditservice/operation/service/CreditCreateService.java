@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRequestDTO;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationResponseDTO;
+import ru.creditbank.creditservice.operation.dto.details.CreditApplicationDetailsDTO;
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
 import ru.creditbank.creditservice.operation.exception.DuplicateCreditApplicationException;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
@@ -59,5 +60,15 @@ public class CreditCreateService {
         credit.getStatus(),
         credit.getCreationDate()
     );
+  }
+
+  @Transactional(readOnly = true, rollbackFor = Exception.class)
+  public CreditApplicationDetailsDTO getApplicationDetailsById(UUID applicationId) {
+    return null;
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public void changeStatusByApplicationId(UUID applicationId) {
+
   }
 }

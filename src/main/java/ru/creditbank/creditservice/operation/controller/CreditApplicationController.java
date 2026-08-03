@@ -8,12 +8,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRequestDTO;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationResponseDTO;
+import ru.creditbank.creditservice.operation.dto.details.CreditApplicationDetailsDTO;
+import ru.creditbank.creditservice.operation.dto.status.StatusUpdateRequestDTO;
 import ru.creditbank.creditservice.operation.service.CreditCreateService;
 
 @Slf4j
@@ -42,5 +47,29 @@ public class CreditApplicationController {
         );
 
     return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/credit/{id}")
+  public ResponseEntity<CreditApplicationDetailsDTO> getApplicationDetails(
+      @PathVariable UUID id,
+      @AuthenticationPrincipal Jwt accessToken
+  ) {
+    log.info("Received request for application details with application id = {}", id);
+    CreditApplicationDetailsDTO details = creditCreateService.getApplicationDetailsById(id);
+
+    return ResponseEntity.ok(details);
+  }
+
+  @PatchMapping("/credit/{id}/status")
+  public ResponseEntity<Void> changeApplicationStatus(
+      @PathVariable UUID id,
+      @RequestBody @Valid StatusUpdateRequestDTO request,
+      @AuthenticationPrincipal Jwt accessToken
+  ) {
+    log.info("Received request for application id = {}, setting a new status = {}",
+        id, request.status());
+    creditCreateService.changeStatusByApplicationId(id);
+
+    return ResponseEntity.ok().build();
   }
 }
