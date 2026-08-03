@@ -14,57 +14,57 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http
-    ) {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
+  @Bean
+  public SecurityFilterChain securityFilterChain(
+      HttpSecurity http
+  ) {
+    return http
+        .csrf(AbstractHttpConfigurer::disable)
 
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
-                )
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(
+                SessionCreationPolicy.STATELESS
+            )
+        )
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**",
-                                "/v3/api-docs.yaml",
-                                "/error"
-                        ).permitAll()
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(
+                "/swagger-ui/**",
+                "/swagger-ui.html",
+                "/v3/api-docs/**",
+                "/v3/api-docs.yaml",
+                "/error"
+            ).permitAll()
 
-                        .requestMatchers(
-                                HttpMethod.POST, "/credit-service/api/v1/credit"
-                        ).hasRole("USER")
+            .requestMatchers(
+                HttpMethod.POST, "/credit-service/api/v1/credit"
+            ).hasRole("USER")
 
-                        .anyRequest().denyAll()
-                )
+            .anyRequest().denyAll()
+        )
 
-                .oauth2ResourceServer(resourceServer ->
-                        resourceServer.jwt(
-                                Customizer.withDefaults()
-                        )
-                )
+        .oauth2ResourceServer(resourceServer ->
+            resourceServer.jwt(
+                Customizer.withDefaults()
+            )
+        )
 
-                .build();
-    }
+        .build();
+  }
 
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter converter =
-                new JwtGrantedAuthoritiesConverter();
+  @Bean
+  public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    JwtGrantedAuthoritiesConverter converter =
+        new JwtGrantedAuthoritiesConverter();
 
-        converter.setAuthoritiesClaimName("authorities");
-        converter.setAuthorityPrefix("");
+    converter.setAuthoritiesClaimName("authorities");
+    converter.setAuthorityPrefix("");
 
-        JwtAuthenticationConverter authenticationConverter =
-                new JwtAuthenticationConverter();
+    JwtAuthenticationConverter authenticationConverter =
+        new JwtAuthenticationConverter();
 
-        authenticationConverter.setJwtGrantedAuthoritiesConverter(converter);
+    authenticationConverter.setJwtGrantedAuthoritiesConverter(converter);
 
-        return authenticationConverter;
-    }
+    return authenticationConverter;
+  }
 }

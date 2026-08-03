@@ -1,6 +1,8 @@
 package ru.creditbank.creditservice.operation.controller;
 
 import jakarta.validation.Valid;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,34 +16,31 @@ import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRe
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationResponseDTO;
 import ru.creditbank.creditservice.operation.service.CreditCreateService;
 
-import java.util.Objects;
-import java.util.UUID;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/credit-service/api/v1")
 public class CreditApplicationController {
 
-    private final CreditCreateService creditCreateService;
+  private final CreditCreateService creditCreateService;
 
-    @PostMapping("/credit")
-    public ResponseEntity<CreditApplicationResponseDTO> createApplication(
-            @Valid @RequestBody CreditApplicationRequestDTO request,
-            @AuthenticationPrincipal Jwt accessToken
-    ) {
-        log.info("Received credit application request");
+  @PostMapping("/credit")
+  public ResponseEntity<CreditApplicationResponseDTO> createApplication(
+      @Valid @RequestBody CreditApplicationRequestDTO request,
+      @AuthenticationPrincipal Jwt accessToken
+  ) {
+    log.info("Received credit application request");
 
-        UUID userId = UUID.fromString(
-                Objects.requireNonNull(accessToken.getClaimAsString("user_id"))
+    UUID userId = UUID.fromString(
+        Objects.requireNonNull(accessToken.getClaimAsString("user_id"))
+    );
+
+    CreditApplicationResponseDTO response = creditCreateService
+        .createApplication(
+            request,
+            userId
         );
 
-        CreditApplicationResponseDTO response = creditCreateService
-                .createApplication(
-                        request,
-                        userId
-                );
-
-        return ResponseEntity.ok(response);
-    }
+    return ResponseEntity.ok(response);
+  }
 }

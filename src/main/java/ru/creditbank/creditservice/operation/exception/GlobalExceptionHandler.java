@@ -9,17 +9,17 @@ import ru.creditbank.creditservice.operation.dto.error.ErrorResponseDTO;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(DuplicateCreditApplicationException.class)
-    public ResponseEntity<ErrorResponseDTO> handleBadCredentials(
-            DuplicateCreditApplicationException exception
-    ) {
-        ErrorResponseDTO response = new ErrorResponseDTO(
-                HttpStatus.BAD_REQUEST.value(),
-                exception.getMessage()
-        );
+  @ExceptionHandler(DuplicateCreditApplicationException.class)
+  public ResponseEntity<ErrorResponseDTO> handleBadCredentials(
+      DuplicateCreditApplicationException exception
+  ) {
+    ErrorResponseDTO response = new ErrorResponseDTO(
+        HttpStatus.BAD_REQUEST.value(),
+        exception.getMessage()
+    );
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(response);
-    }
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(response);
+  }
 }
