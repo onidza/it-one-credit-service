@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
 import ru.creditbank.creditservice.config.TestcontainersConfiguration;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRequestDTO;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationResponseDTO;
@@ -17,7 +18,8 @@ import ru.creditbank.creditservice.operation.service.CreditCreateService;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
-class CreditApplicationIntegrationTest {
+@Transactional
+class CreditApplicationServiceIntegrationTest {
 
   @Autowired
   private CreditCreateService creditCreateService;
