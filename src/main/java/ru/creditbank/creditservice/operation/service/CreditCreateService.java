@@ -18,10 +18,9 @@ import ru.creditbank.creditservice.operation.repository.CreditRepository;
 @RequiredArgsConstructor
 public class CreditCreateService {
 
-  private final CreditRepository creditRepository;
-
   private static final Duration DUPLICATE_INTERVAL =
       Duration.ofSeconds(10);
+  private final CreditRepository creditRepository;
 
   @Transactional(rollbackFor = Exception.class)
   public CreditApplicationResponseDTO createApplication(
