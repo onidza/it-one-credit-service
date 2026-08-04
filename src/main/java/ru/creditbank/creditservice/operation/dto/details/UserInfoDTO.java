@@ -1,7 +1,9 @@
 package ru.creditbank.creditservice.operation.dto.details;
 
+import java.util.UUID;
+
 public record UserInfoDTO(
-    String userId,
+    UUID userId,
     String fullName,
     String email
 ) {

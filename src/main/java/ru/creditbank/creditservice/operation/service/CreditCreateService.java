@@ -10,7 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRequestDTO;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationResponseDTO;
 import ru.creditbank.creditservice.operation.dto.details.CreditApplicationDetailsDTO;
+import ru.creditbank.creditservice.operation.dto.details.LoanDetailsDTO;
+import ru.creditbank.creditservice.operation.dto.details.UserInfoDTO;
+import ru.creditbank.creditservice.operation.dto.status.StatusUpdateRequestDTO;
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
+import ru.creditbank.creditservice.operation.entity.Status;
+import ru.creditbank.creditservice.operation.exception.CreditApplicationNotFoundException;
 import ru.creditbank.creditservice.operation.exception.DuplicateCreditApplicationException;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
 
@@ -26,7 +31,8 @@ public class CreditCreateService {
   @Transactional(rollbackFor = Exception.class)
   public CreditApplicationResponseDTO createApplication(
       CreditApplicationRequestDTO request,
-      UUID userId
+      UUID userId,
+      String email
   ) {
     boolean recentlyCreated =
         creditRepository.existsByUserIdAndCreationDateAfter(
@@ -40,35 +46,72 @@ public class CreditCreateService {
       );
     }
 
-    CreditEntity credit = new CreditEntity(
+    CreditEntity application = new CreditEntity(
         userId,
         request.fullName(),
+        email,
         request.requestedAmount(),
         request.termMonths()
     );
 
-    creditRepository.saveAndFlush(credit);
+    creditRepository.saveAndFlush(application);
 
     log.info(
         "Credit application created, applicationId = {}, userId = {}",
-        credit.getId(),
+        application.getId(),
         userId
     );
 
     return new CreditApplicationResponseDTO(
-        credit.getId(),
-        credit.getStatus(),
-        credit.getCreationDate()
+        application.getId(),
+        application.getStatus(),
+        application.getCreationDate()
     );
   }
 
   @Transactional(readOnly = true, rollbackFor = Exception.class)
   public CreditApplicationDetailsDTO getApplicationDetailsById(UUID applicationId) {
-    return null;
+    CreditEntity application = creditRepository.findById(applicationId)
+        .orElseThrow(() ->
+            new CreditApplicationNotFoundException(applicationId)
+        );
+
+    log.info("Credit application details found, id = {}", applicationId);
+
+    return new CreditApplicationDetailsDTO(
+        applicationId,
+        new UserInfoDTO(
+            application.getUserId(),
+            application.getUserFullName(),
+            application.getUserEmail()
+        ),
+        new LoanDetailsDTO(
+            application.getRequestedAmount(),
+            application.getTermMonths(),
+            application.getInterestRate()
+        ),
+        application.getStatus(),
+        application.getCreationDate()
+    );
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public void changeStatusByApplicationId(UUID applicationId) {
+  public void changeStatusByApplicationId(
+      UUID applicationId,
+      StatusUpdateRequestDTO request
+  ) {
+    CreditEntity application = creditRepository.findById(applicationId)
+        .orElseThrow(() ->
+            new CreditApplicationNotFoundException(applicationId)
+        );
 
+    application.changeStatus(
+        Status.valueOf(request.status().name()),
+        request.managerComment(),
+        request.interestRate()
+    );
+
+    log.info("Application = {} has a new status = {}",
+        applicationId, request.status().name());
   }
 }

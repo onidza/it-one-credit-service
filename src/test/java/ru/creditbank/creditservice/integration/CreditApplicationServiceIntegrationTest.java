@@ -41,7 +41,8 @@ class CreditApplicationServiceIntegrationTest {
     CreditApplicationResponseDTO response =
         creditCreateService.createApplication(
             request,
-            userId
+            userId,
+            "example@gmail.com"
         );
 
     CreditEntity saved = creditRepository
@@ -49,6 +50,7 @@ class CreditApplicationServiceIntegrationTest {
         .orElseThrow();
 
     Assertions.assertEquals(userId, saved.getUserId());
+    Assertions.assertEquals("example@gmail.com", saved.getUserEmail());
     Assertions.assertEquals(Status.PENDING, saved.getStatus());
     Assertions.assertEquals(
         new BigDecimal("50000.00"),

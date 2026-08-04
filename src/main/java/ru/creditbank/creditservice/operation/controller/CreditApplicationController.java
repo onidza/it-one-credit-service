@@ -40,10 +40,13 @@ public class CreditApplicationController {
         Objects.requireNonNull(accessToken.getClaimAsString("user_id"))
     );
 
+    String sub = accessToken.getSubject();
+
     CreditApplicationResponseDTO response = creditCreateService
         .createApplication(
             request,
-            userId
+            userId,
+            sub
         );
 
     return ResponseEntity.ok(response);
@@ -51,8 +54,7 @@ public class CreditApplicationController {
 
   @GetMapping("/credit/{id}")
   public ResponseEntity<CreditApplicationDetailsDTO> getApplicationDetails(
-      @PathVariable UUID id,
-      @AuthenticationPrincipal Jwt accessToken
+      @PathVariable UUID id
   ) {
     log.info("Received request for application details with application id = {}", id);
     CreditApplicationDetailsDTO details = creditCreateService.getApplicationDetailsById(id);
@@ -63,12 +65,11 @@ public class CreditApplicationController {
   @PatchMapping("/credit/{id}/status")
   public ResponseEntity<Void> changeApplicationStatus(
       @PathVariable UUID id,
-      @RequestBody @Valid StatusUpdateRequestDTO request,
-      @AuthenticationPrincipal Jwt accessToken
+      @RequestBody @Valid StatusUpdateRequestDTO request
   ) {
     log.info("Received request for application id = {}, setting a new status = {}",
         id, request.status());
-    creditCreateService.changeStatusByApplicationId(id);
+    creditCreateService.changeStatusByApplicationId(id, request);
 
     return ResponseEntity.ok().build();
   }

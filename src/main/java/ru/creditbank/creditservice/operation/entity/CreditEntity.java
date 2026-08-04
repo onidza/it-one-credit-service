@@ -14,8 +14,10 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import ru.creditbank.creditservice.operation.exception.InvalidStatusUpdateException;
 
 @Entity
 @Table(name = "credit_operation")
@@ -37,6 +39,12 @@ public class CreditEntity {
   private String userFullName;
 
   @Column(
+      name = "user_email",
+      nullable = false
+  )
+  private String userEmail;
+
+  @Column(
       name = "requested_amount",
       nullable = false
   )
@@ -45,6 +53,7 @@ public class CreditEntity {
   @Column(name = "term_months", nullable = false)
   private Integer termMonths;
 
+  @Setter
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 20)
   private Status status;
@@ -68,6 +77,7 @@ public class CreditEntity {
   )
   private BigDecimal interestRate;
 
+  @Setter
   @Column(
       name = "manager_comment",
       length = 500
@@ -77,13 +87,40 @@ public class CreditEntity {
   public CreditEntity(
       UUID userId,
       String userFullName,
+      String userEmail,
       BigDecimal requestedAmount,
       Integer termMonths
   ) {
     this.userId = userId;
     this.userFullName = userFullName;
+    this.userEmail = userEmail;
     this.requestedAmount = requestedAmount;
     this.termMonths = termMonths;
     this.status = Status.PENDING;
+  }
+
+  public void changeStatus(
+      Status newStatus,
+      String managerComment,
+      BigDecimal interestRate
+  ) {
+    if (newStatus == Status.APPROVED) {
+      if (interestRate == null || interestRate.signum() <= 0) {
+        throw new InvalidStatusUpdateException(
+            "Interest rate must be greater than zero for approved application"
+        );
+      }
+
+      this.interestRate = interestRate;
+    }
+
+    if (newStatus == Status.REJECTED) {
+      this.interestRate = null;
+    }
+
+    this.status = newStatus;
+    this.managerComment = managerComment == null
+        ? null
+        : managerComment.strip();
   }
 }

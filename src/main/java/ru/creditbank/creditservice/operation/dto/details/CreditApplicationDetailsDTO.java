@@ -2,7 +2,7 @@ package ru.creditbank.creditservice.operation.dto.details;
 
 import java.time.Instant;
 import java.util.UUID;
-import ru.creditbank.apigateway.operation.dto.application.Status;
+import ru.creditbank.creditservice.operation.entity.Status;
 
 public record CreditApplicationDetailsDTO(
   UUID id,

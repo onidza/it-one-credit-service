@@ -22,4 +22,32 @@ public class GlobalExceptionHandler {
         .status(HttpStatus.BAD_REQUEST)
         .body(response);
   }
+
+  @ExceptionHandler(CreditApplicationNotFoundException.class)
+  public ResponseEntity<ErrorResponseDTO> handleApplicationNotFound(
+      CreditApplicationNotFoundException exception
+  ) {
+    ErrorResponseDTO response = new ErrorResponseDTO(
+        HttpStatus.NOT_FOUND.value(),
+        exception.getMessage()
+    );
+
+    return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(response);
+  }
+
+  @ExceptionHandler(InvalidStatusUpdateException.class)
+  public ResponseEntity<ErrorResponseDTO> handleApplicationNotFound(
+      InvalidStatusUpdateException exception
+  ) {
+    ErrorResponseDTO response = new ErrorResponseDTO(
+        HttpStatus.BAD_REQUEST.value(),
+        exception.getMessage()
+    );
+
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(response);
+  }
 }
