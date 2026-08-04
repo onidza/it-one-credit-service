@@ -39,10 +39,10 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/credit-service/api/v1/credit")
             .hasAnyRole("USER")
 
-            .requestMatchers(HttpMethod.GET,"/credit-service/api/v1/credit/{id}")
+            .requestMatchers(HttpMethod.GET, "/credit-service/api/v1/credit/{id}")
             .hasRole("CREDIT_MANAGER")
 
-            .requestMatchers(HttpMethod.PATCH,"/credit-service/api/v1/credit/{id}/status")
+            .requestMatchers(HttpMethod.PATCH, "/credit-service/api/v1/credit/{id}/status")
             .hasRole("CREDIT_MANAGER")
 
             .anyRequest().denyAll()
