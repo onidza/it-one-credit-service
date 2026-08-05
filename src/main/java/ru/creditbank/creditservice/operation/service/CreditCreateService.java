@@ -27,6 +27,7 @@ public class CreditCreateService {
   private static final Duration DUPLICATE_INTERVAL =
       Duration.ofSeconds(10);
   private final CreditRepository creditRepository;
+  private final NotificationService notificationService;
 
   @Transactional(rollbackFor = Exception.class)
   public CreditApplicationResponseDTO createApplication(
@@ -109,6 +110,14 @@ public class CreditCreateService {
         Status.valueOf(request.status().name()),
         request.managerComment(),
         request.interestRate()
+    );
+
+    notificationService.sendStatusChangedEmail(
+        application.getUserEmail(),
+        application.getUserFullName(),
+        applicationId,
+        application.getStatus(),
+        application.getManagerComment()
     );
 
     log.info("Application = {} has a new status = {}",

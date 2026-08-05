@@ -37,7 +37,7 @@ public class SecurityConfig {
             ).permitAll()
 
             .requestMatchers(HttpMethod.POST, "/credit-service/api/v1/credit")
-            .hasAnyRole("USER")
+            .hasRole("USER")
 
             .requestMatchers(HttpMethod.GET, "/credit-service/api/v1/credit/{id}")
             .hasRole("CREDIT_MANAGER")

@@ -128,7 +128,12 @@
       <scope>test</scope>
       <version>3.13.2</version>
     </dependency>
+    <dependency>
+      <artifactId>spring-boot-starter-mail</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
   </dependencies>
+
   <description>credit-service</description>
   <developers>
     <developer/>
