@@ -6,10 +6,10 @@ spring:
     name: credit-service
 
   mail:
-    host: smtp.mail.ru #.env
-    port: 465 #.env
-    username: it_one_smtp@mail.ru #.env
-    password: EEKslUqLi61bfmPsdbq2 #.env
+    host: ${SPRING_MAIL_HOST:smtp.mail.ru}
+    port: ${SPRING_MAIL_PORT:465}
+    username: ${SPRING_MAIL_USERNAME:it_one_smtp@mail.ru}
+    password: ${SPRING_MAIL_PASSWORD:EEKslUqLi61bfmPsdbq2}
 
     ssl:
       enabled: true
@@ -38,5 +38,5 @@ logging:
 
 security:
   jwt:
-    issuer: apigateway #.env
-    secret: McHowHFh9zfPUjAu6VdpgKm+zzOTzrpNmElKZana3RM= #.env
+    issuer: ${SECURITY_JWT_ISSUER:apigateway}
+    secret: ${SECURITY_JWT_SECRET:McHowHFh9zfPUjAu6VdpgKm+zzOTzrpNmElKZana3RM=}
