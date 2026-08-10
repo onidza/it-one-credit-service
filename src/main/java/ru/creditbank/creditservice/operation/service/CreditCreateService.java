@@ -1,7 +1,5 @@
 package ru.creditbank.creditservice.operation.service;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,17 +16,14 @@ import ru.creditbank.creditservice.operation.dto.publisher.CreditStatusChangedEv
 import ru.creditbank.creditservice.operation.dto.status.StatusUpdateRequestDTO;
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
 import ru.creditbank.creditservice.operation.entity.Status;
+import ru.creditbank.creditservice.operation.exception.ApplicationAlreadyExistsException;
 import ru.creditbank.creditservice.operation.exception.CreditApplicationNotFoundException;
-import ru.creditbank.creditservice.operation.exception.DuplicateCreditApplicationException;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CreditCreateService {
-
-  private static final Duration DUPLICATE_INTERVAL =
-      Duration.ofSeconds(10);
 
   private final CreditRepository creditRepository;
   private final ApplicationEventPublisher eventPublisher;
@@ -39,16 +34,8 @@ public class CreditCreateService {
       UUID userId,
       String email
   ) {
-    boolean recentlyCreated =
-        creditRepository.existsByUserIdAndCreationDateAfter(
-            userId,
-            Instant.now().minus(DUPLICATE_INTERVAL)
-        );
-
-    if (recentlyCreated) {
-      throw new DuplicateCreditApplicationException(
-          "Credit application has already been submitted"
-      );
+    if (creditRepository.existsByUserId(userId)) {
+      throw new ApplicationAlreadyExistsException(userId);
     }
 
     CreditEntity application = new CreditEntity(

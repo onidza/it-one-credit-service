@@ -38,7 +38,7 @@ class CreditApplicationErrorIntegrationTest {
 
     String request = """
         {
-            "fullName": "Иван Иванов",
+            "fullName": "Иван Иванов Иванович",
             "requestedAmount": 50000,
             "termMonths": 12
         }
@@ -97,7 +97,7 @@ class CreditApplicationErrorIntegrationTest {
   void shouldReturnUnauthorizedWithoutJwt() throws Exception {
     String request = """
         {
-            "fullName": "Иван Иванов",
+            "fullName": "Иван Иванов Иванович",
             "requestedAmount": 50000,
             "termMonths": 12
         }

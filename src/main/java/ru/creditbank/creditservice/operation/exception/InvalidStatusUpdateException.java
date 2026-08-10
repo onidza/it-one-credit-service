@@ -1,8 +1,13 @@
 package ru.creditbank.creditservice.operation.exception;
 
-public class InvalidStatusUpdateException extends RuntimeException {
+import org.springframework.http.HttpStatus;
 
-  public InvalidStatusUpdateException(String message) {
-    super(message);
+public class InvalidStatusUpdateException extends BusinessException {
+
+  public InvalidStatusUpdateException() {
+    super(
+        "Interest rate must be greater than zero for approved application",
+        HttpStatus.BAD_REQUEST
+    );
   }
 }

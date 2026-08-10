@@ -106,11 +106,8 @@ public class CreditEntity {
   ) {
     if (newStatus == Status.APPROVED) {
       if (interestRate == null || interestRate.signum() <= 0) {
-        throw new InvalidStatusUpdateException(
-            "Interest rate must be greater than zero for approved application"
-        );
+        throw new InvalidStatusUpdateException();
       }
-
       this.interestRate = interestRate;
     }
 
