@@ -40,3 +40,9 @@ security:
   jwt:
     issuer: ${SECURITY_JWT_ISSUER:apigateway}
     secret: ${SECURITY_JWT_SECRET:McHowHFh9zfPUjAu6VdpgKm+zzOTzrpNmElKZana3RM=}
+
+rest:
+  loan-service:
+    url: ${REST_LOAN_SERVICE_URL:http://localhost:8082}
+    connect-timeout: 1s
+    read-timeout: 3s

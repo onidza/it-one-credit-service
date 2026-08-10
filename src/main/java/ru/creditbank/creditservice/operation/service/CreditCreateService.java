@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRequestDTO;
@@ -12,6 +13,8 @@ import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRe
 import ru.creditbank.creditservice.operation.dto.details.CreditApplicationDetailsDTO;
 import ru.creditbank.creditservice.operation.dto.details.LoanDetailsDTO;
 import ru.creditbank.creditservice.operation.dto.details.UserInfoDTO;
+import ru.creditbank.creditservice.operation.dto.publisher.CreditApprovedEventDTO;
+import ru.creditbank.creditservice.operation.dto.publisher.CreditStatusChangedEventDTO;
 import ru.creditbank.creditservice.operation.dto.status.StatusUpdateRequestDTO;
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
 import ru.creditbank.creditservice.operation.entity.Status;
@@ -26,8 +29,9 @@ public class CreditCreateService {
 
   private static final Duration DUPLICATE_INTERVAL =
       Duration.ofSeconds(10);
+
   private final CreditRepository creditRepository;
-  private final NotificationService notificationService;
+  private final ApplicationEventPublisher eventPublisher;
 
   @Transactional(rollbackFor = Exception.class)
   public CreditApplicationResponseDTO createApplication(
@@ -112,15 +116,28 @@ public class CreditCreateService {
         request.interestRate()
     );
 
-    notificationService.sendStatusChangedEmail(
-        application.getUserEmail(),
-        application.getUserFullName(),
-        applicationId,
-        application.getStatus(),
-        application.getManagerComment()
-    );
-
     log.info("Application = {} has a new status = {}",
         applicationId, request.status().name());
+
+    eventPublisher.publishEvent(
+        new CreditStatusChangedEventDTO(
+            application.getUserEmail(),
+            application.getUserFullName(),
+            applicationId,
+            application.getStatus(),
+            application.getManagerComment()
+        )
+    );
+
+    if (application.getStatus() == Status.APPROVED) {
+      eventPublisher.publishEvent(new CreditApprovedEventDTO(
+              applicationId,
+              application.getUserId(),
+              application.getRequestedAmount(),
+              application.getTermMonths(),
+              application.getInterestRate()
+          )
+      );
+    }
   }
 }
