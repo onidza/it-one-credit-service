@@ -15,7 +15,6 @@ public class LoanIssuanceSagaOrchestrator {
   private final LoanManagementClient loanManagementClient;
 
   public void createLoanAndSchedule(CreditApprovedEventDTO event) {
-
     CreateLoanResponseDTO loan =
         loanManagementClient.createLoan(
             new CreateLoanRequestDTO(
@@ -23,12 +22,14 @@ public class LoanIssuanceSagaOrchestrator {
                 event.userId(),
                 event.totalAmount(),
                 event.termMonths(),
-                event.interestRate()
+                event.interestRate(),
+                event.accessToken()
             )
         );
 
     loanManagementClient.createSchedule(
-        loan.loanId()
+        loan.loanId(),
+        event.accessToken()
     );
   }
 

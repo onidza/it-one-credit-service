@@ -18,14 +18,16 @@ public class LoanManagementClient {
   public CreateLoanResponseDTO createLoan(CreateLoanRequestDTO request) {
     return loanManagementRestClient.post()
         .uri("/loan-management-service/internal/api/v1/loans")
+        .headers(headers -> headers.setBearerAuth(request.accessToken()))
         .body(request)
         .retrieve()
         .body(CreateLoanResponseDTO.class);
   }
 
-  public void createSchedule(UUID loanId) {
+  public void createSchedule(UUID loanId, String accessToken) {
     loanManagementRestClient.post()
-        .uri("/loan-management-service/internal/api/v1/loans", loanId)
+        .uri("/loan-management-service/internal/api/v1/loans/{loanId}/schedule", loanId)
+        .headers(headers -> headers.setBearerAuth(accessToken))
         .retrieve()
         .toBodilessEntity();
   }

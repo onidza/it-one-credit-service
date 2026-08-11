@@ -8,7 +8,8 @@ public record CreditApprovedEventDTO(
     UUID userId,
     BigDecimal totalAmount,
     Integer termMonths,
-    BigDecimal interestRate
+    BigDecimal interestRate,
+    String accessToken
 ) {
 
 }

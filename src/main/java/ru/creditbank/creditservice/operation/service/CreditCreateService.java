@@ -90,7 +90,8 @@ public class CreditCreateService {
   @Transactional(rollbackFor = Exception.class)
   public void changeStatusByApplicationId(
       UUID applicationId,
-      StatusUpdateRequestDTO request
+      StatusUpdateRequestDTO request,
+      String accessToken
   ) {
     CreditEntity application = creditRepository.findById(applicationId)
         .orElseThrow(() ->
@@ -122,7 +123,8 @@ public class CreditCreateService {
               application.getUserId(),
               application.getRequestedAmount(),
               application.getTermMonths(),
-              application.getInterestRate()
+              application.getInterestRate(),
+              accessToken
           )
       );
     }

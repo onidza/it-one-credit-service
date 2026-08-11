@@ -65,11 +65,16 @@ public class CreditApplicationController {
   @PatchMapping("/credit/{id}/status")
   public ResponseEntity<Void> changeApplicationStatus(
       @PathVariable UUID id,
-      @RequestBody @Valid StatusUpdateRequestDTO request
+      @RequestBody @Valid StatusUpdateRequestDTO request,
+      @AuthenticationPrincipal Jwt jwt
   ) {
     log.info("Received request for application id = {}, setting a new status = {}",
         id, request.status());
-    creditCreateService.changeStatusByApplicationId(id, request);
+    creditCreateService.changeStatusByApplicationId(
+        id,
+        request,
+        jwt.getTokenValue()
+    );
 
     return ResponseEntity.ok().build();
   }
