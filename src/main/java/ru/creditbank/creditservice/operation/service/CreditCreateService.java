@@ -34,9 +34,6 @@ public class CreditCreateService {
       UUID userId,
       String email
   ) {
-    if (creditRepository.existsByUserId(userId)) {
-      throw new ApplicationAlreadyExistsException(userId);
-    }
 
     CreditEntity application = new CreditEntity(
         userId,
