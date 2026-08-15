@@ -40,13 +40,13 @@ public class CreditApplicationController {
         Objects.requireNonNull(accessToken.getClaimAsString("user_id"))
     );
 
-    String sub = accessToken.getSubject();
+    String email = accessToken.getSubject();
 
     CreditApplicationResponseDTO response = creditCreateService
         .createApplication(
             request,
             userId,
-            sub
+            email
         );
 
     return ResponseEntity.ok(response);

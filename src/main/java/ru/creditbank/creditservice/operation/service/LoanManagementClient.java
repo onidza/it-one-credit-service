@@ -1,5 +1,6 @@
 package ru.creditbank.creditservice.operation.service;
 
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +17,15 @@ public class LoanManagementClient {
   private final RestClient loanManagementRestClient;
 
   public CreateLoanResponseDTO createLoan(CreateLoanRequestDTO request) {
-    return loanManagementRestClient.post()
-        .uri("/loan-management-service/internal/api/v1/loans")
-        .headers(headers -> headers.setBearerAuth(request.accessToken()))
-        .body(request)
-        .retrieve()
-        .body(CreateLoanResponseDTO.class);
+    return Objects.requireNonNull(
+        loanManagementRestClient.post()
+            .uri("/loan-management-service/internal/api/v1/loans")
+            .headers(headers -> headers.setBearerAuth(request.accessToken()))
+            .body(request)
+            .retrieve()
+            .body(CreateLoanResponseDTO.class),
+        "Loan management service returned empty response body"
+    );
   }
 
   public void createSchedule(UUID loanId, String accessToken) {
@@ -31,4 +35,6 @@ public class LoanManagementClient {
         .retrieve()
         .toBodilessEntity();
   }
+
+  // auth token added in branch 'task-5'
 }
