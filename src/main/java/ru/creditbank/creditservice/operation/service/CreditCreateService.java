@@ -17,8 +17,8 @@ import ru.creditbank.creditservice.operation.dto.publisher.CreditStatusChangedEv
 import ru.creditbank.creditservice.operation.dto.status.StatusUpdateRequestDTO;
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
 import ru.creditbank.creditservice.operation.entity.Status;
-import ru.creditbank.creditservice.operation.exception.DuplicateCreditApplicationException;
 import ru.creditbank.creditservice.operation.exception.CreditApplicationNotFoundException;
+import ru.creditbank.creditservice.operation.exception.DuplicateCreditApplicationException;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
 
 @Slf4j
