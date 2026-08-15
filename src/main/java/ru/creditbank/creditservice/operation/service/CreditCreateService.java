@@ -1,5 +1,6 @@
 package ru.creditbank.creditservice.operation.service;
 
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,9 @@ public class CreditCreateService {
       UUID userId,
       String email
   ) {
-    if (creditRepository.existsByUserId(userId)) {
+    if (creditRepository.existsByUserIdAndStatusIn(
+        userId, List.of(Status.APPROVED, Status.PENDING)
+    )) {
       throw new ApplicationAlreadyExistsException(userId);
     }
 

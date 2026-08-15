@@ -2,6 +2,7 @@ package ru.creditbank.creditservice.operation.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +26,9 @@ public class GlobalExceptionHandler {
     String message = ex.getBindingResult()
         .getFieldErrors()
         .stream()
-        .findFirst()
         .map(FieldError::getDefaultMessage)
-        .orElse("Invalid request data");
+        .distinct()
+        .collect(Collectors.joining("; "));
 
     ErrorResponseDTO response = new ErrorResponseDTO(
         LocalDateTime.now(),
