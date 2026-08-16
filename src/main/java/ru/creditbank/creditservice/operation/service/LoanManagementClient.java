@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import ru.creditbank.creditservice.operation.dto.internal.CreateLoanRequestDTO;
 import ru.creditbank.creditservice.operation.dto.internal.CreateLoanResponseDTO;
+import ru.creditbank.creditservice.operation.dto.internal.CreditProfileDTO;
 
 @Component
 @Slf4j
@@ -37,4 +38,22 @@ public class LoanManagementClient {
   }
 
   // auth token added in branch 'task-5'
+
+  public CreditProfileDTO getCreditProfile(
+      UUID userId,
+      String accessToken
+  ) {
+    return Objects.requireNonNull(
+        loanManagementRestClient
+            .get()
+            .uri(
+                "/loan-management-service/internal/api/v1/credit-profile/user/{userId}",
+                userId
+            )
+            .headers(headers -> headers.setBearerAuth(accessToken))
+            .retrieve()
+            .body(CreditProfileDTO.class),
+        "Loan management service returned empty response body"
+    );
+  }
 }

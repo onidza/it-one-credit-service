@@ -1,12 +1,10 @@
 package ru.creditbank.creditservice.operation.service;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 import ru.creditbank.creditservice.operation.dto.internal.CreditProfileDTO;
 
 @Service
@@ -14,8 +12,8 @@ import ru.creditbank.creditservice.operation.dto.internal.CreditProfileDTO;
 @RequiredArgsConstructor
 public class AutomaticCreditDecisionService {
 
-  private final RestClient loanManagementRestClient;
   private final CreditDecisionTransactionService transactionService;
+  private final LoanManagementClient loanManagementClient;
 
   private static final BigDecimal MAX_TOTAL_CREDIT_EXPOSURE = new BigDecimal("1000000");
   private static final int NEED_COMPLETED_PAYMENTS_FOR_APPROVE = 10;
@@ -27,16 +25,11 @@ public class AutomaticCreditDecisionService {
       BigDecimal requestedAmount,
       String accessToken
   ) {
-    CreditProfileDTO creditProfile = Objects.requireNonNull(
-        loanManagementRestClient
-            .get()
-            .uri("/loan-management-service/internal/api/v1/credit-profile/user/{userId}",
-                userId)
-            .headers(headers -> headers.setBearerAuth(accessToken))
-            .retrieve()
-            .body(CreditProfileDTO.class),
-        "Loan management service returned empty response body"
-    );
+    CreditProfileDTO creditProfile =
+        loanManagementClient.getCreditProfile(
+            userId,
+            accessToken
+        );
 
     if (creditProfile.existingOverduePaymentsCount() > 0) {
       return;
