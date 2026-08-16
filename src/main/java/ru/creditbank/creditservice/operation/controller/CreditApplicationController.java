@@ -46,7 +46,8 @@ public class CreditApplicationController {
         .createApplication(
             request,
             userId,
-            email
+            email,
+            accessToken.getTokenValue()
         );
 
     return ResponseEntity.ok(response);
@@ -70,6 +71,7 @@ public class CreditApplicationController {
   ) {
     log.info("Received request for application id = {}, setting a new status = {}",
         id, request.status());
+
     creditCreateService.changeStatusByApplicationId(
         id,
         request,

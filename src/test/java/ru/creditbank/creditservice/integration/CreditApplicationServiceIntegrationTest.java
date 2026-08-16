@@ -42,7 +42,8 @@ class CreditApplicationServiceIntegrationTest {
         creditCreateService.createApplication(
             request,
             userId,
-            "example@gmail.com"
+            "example@gmail.com",
+            ""
         );
 
     CreditEntity saved = creditRepository

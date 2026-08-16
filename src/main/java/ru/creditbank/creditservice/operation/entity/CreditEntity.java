@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import ru.creditbank.creditservice.operation.exception.InvalidStatusUpdateException;
+import ru.creditbank.creditservice.operation.exception.InvalidStatusUpdateApprovedException;
 
 @Entity
 @Table(name = "credit_operation")
@@ -70,6 +70,7 @@ public class CreditEntity {
   @Column(name = "last_updated", nullable = false)
   private Instant lastUpdated;
 
+  @Setter
   @Column(
       name = "interest_rate",
       precision = 5,
@@ -106,7 +107,7 @@ public class CreditEntity {
   ) {
     if (newStatus == Status.APPROVED) {
       if (interestRate == null || interestRate.signum() <= 0) {
-        throw new InvalidStatusUpdateException();
+        throw new InvalidStatusUpdateApprovedException();
       }
       this.interestRate = interestRate;
     }

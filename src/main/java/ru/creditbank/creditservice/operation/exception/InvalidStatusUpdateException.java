@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 
 public class InvalidStatusUpdateException extends BusinessException {
 
-  public InvalidStatusUpdateException() {
+  public InvalidStatusUpdateException(String currentStatus) {
     super(
-        "Interest rate must be greater than zero for approved application",
+        "Status already has been changed on '%s".formatted(currentStatus),
         HttpStatus.BAD_REQUEST
     );
   }

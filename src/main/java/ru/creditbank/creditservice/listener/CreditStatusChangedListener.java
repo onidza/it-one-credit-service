@@ -6,8 +6,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import ru.creditbank.creditservice.operation.dto.publisher.CreditApplicationCreatedEventDTO;
 import ru.creditbank.creditservice.operation.dto.publisher.CreditApprovedEventDTO;
 import ru.creditbank.creditservice.operation.dto.publisher.CreditStatusChangedEventDTO;
+import ru.creditbank.creditservice.operation.service.AutomaticCreditDecisionService;
 import ru.creditbank.creditservice.operation.service.LoanIssuanceSagaOrchestrator;
 import ru.creditbank.creditservice.operation.service.NotificationService;
 
@@ -18,6 +20,7 @@ public class CreditStatusChangedListener {
 
   private final LoanIssuanceSagaOrchestrator sagaOrchestrator;
   private final NotificationService notificationService;
+  private final AutomaticCreditDecisionService decisionService;
 
   @Async
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -32,7 +35,7 @@ public class CreditStatusChangedListener {
       );
     } catch (Exception ex) {
       log.error(
-          "Failed to send status changed email, applicationId = {}",
+          "Failed to send status changed email, userId = {}",
           event.applicationId(),
           ex
       );
@@ -45,15 +48,40 @@ public class CreditStatusChangedListener {
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void handle(CreditApprovedEventDTO event) {
     try {
-      sagaOrchestrator.createLoanAndSchedule(event);
+      sagaOrchestrator.createLoanAndSchedule(
+          event.creditApplicationId(),
+          event.userId(),
+          event.totalAmount(),
+          event.termMonths(),
+          event.interestRate(),
+          event.accessToken()
+      );
     } catch (Exception ex) {
       log.error(
-          "Loan issuance saga failed, applicationId = {}",
+          "Loan issuance saga failed, userId = {}",
           event.creditApplicationId(),
           ex
       );
 
       // Task 7: retry, compensation
+    }
+  }
+
+  @Async
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+  public void handle(CreditApplicationCreatedEventDTO event) {
+    try {
+      decisionService.processApplication(
+          event.userId(),
+          event.applicationId(),
+          event.requestedAmount(),
+          event.accessToken()
+      );
+    } catch (Exception ex) {
+      log.error(
+          "Failed to change application status automatically",
+          ex
+      );
     }
   }
 }

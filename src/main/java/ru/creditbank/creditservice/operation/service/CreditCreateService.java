@@ -12,6 +12,7 @@ import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRe
 import ru.creditbank.creditservice.operation.dto.details.CreditApplicationDetailsDTO;
 import ru.creditbank.creditservice.operation.dto.details.LoanDetailsDTO;
 import ru.creditbank.creditservice.operation.dto.details.UserInfoDTO;
+import ru.creditbank.creditservice.operation.dto.publisher.CreditApplicationCreatedEventDTO;
 import ru.creditbank.creditservice.operation.dto.publisher.CreditApprovedEventDTO;
 import ru.creditbank.creditservice.operation.dto.publisher.CreditStatusChangedEventDTO;
 import ru.creditbank.creditservice.operation.dto.status.StatusUpdateRequestDTO;
@@ -19,6 +20,7 @@ import ru.creditbank.creditservice.operation.entity.CreditEntity;
 import ru.creditbank.creditservice.operation.entity.Status;
 import ru.creditbank.creditservice.operation.exception.CreditApplicationNotFoundException;
 import ru.creditbank.creditservice.operation.exception.DuplicateCreditApplicationException;
+import ru.creditbank.creditservice.operation.exception.InvalidStatusUpdateException;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
 
 @Slf4j
@@ -33,7 +35,8 @@ public class CreditCreateService {
   public CreditApplicationResponseDTO createApplication(
       CreditApplicationRequestDTO request,
       UUID userId,
-      String email
+      String email,
+      String accessToken
   ) {
     if (creditRepository.existsByUserIdAndCreationDateAfter(
         userId,
@@ -58,6 +61,15 @@ public class CreditCreateService {
         userId
     );
 
+    eventPublisher.publishEvent(
+        new CreditApplicationCreatedEventDTO(
+            userId,
+            application.getId(),
+            application.getRequestedAmount(),
+            accessToken
+        )
+    );
+
     return new CreditApplicationResponseDTO(
         application.getId(),
         application.getStatus(),
@@ -68,9 +80,7 @@ public class CreditCreateService {
   @Transactional(readOnly = true, rollbackFor = Exception.class)
   public CreditApplicationDetailsDTO getApplicationDetailsById(UUID applicationId) {
     CreditEntity application = creditRepository.findById(applicationId)
-        .orElseThrow(() ->
-            new CreditApplicationNotFoundException(applicationId)
-        );
+        .orElseThrow(CreditApplicationNotFoundException::new);
 
     log.info("Credit application details found, id = {}", applicationId);
 
@@ -98,9 +108,11 @@ public class CreditCreateService {
       String accessToken
   ) {
     CreditEntity application = creditRepository.findById(applicationId)
-        .orElseThrow(() ->
-            new CreditApplicationNotFoundException(applicationId)
-        );
+        .orElseThrow(CreditApplicationNotFoundException::new);
+
+    if (application.getStatus() != Status.PENDING) {
+      throw new InvalidStatusUpdateException(application.getStatus().name());
+    }
 
     application.changeStatus(
         Status.valueOf(request.status().name()),

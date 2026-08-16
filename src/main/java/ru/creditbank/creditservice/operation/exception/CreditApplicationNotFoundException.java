@@ -1,13 +1,12 @@
 package ru.creditbank.creditservice.operation.exception;
 
-import java.util.UUID;
 import org.springframework.http.HttpStatus;
 
 public class CreditApplicationNotFoundException extends BusinessException {
 
-  public CreditApplicationNotFoundException(UUID applicationId) {
+  public CreditApplicationNotFoundException() {
     super(
-        "Credit application with id '%s' not found".formatted(applicationId),
+        "Credit application not found",
         HttpStatus.NOT_FOUND
     );
   }

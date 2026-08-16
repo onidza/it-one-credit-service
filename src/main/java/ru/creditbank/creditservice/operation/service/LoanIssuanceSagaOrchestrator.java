@@ -1,11 +1,12 @@
 package ru.creditbank.creditservice.operation.service;
 
+import java.math.BigDecimal;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.creditbank.creditservice.operation.dto.internal.CreateLoanRequestDTO;
 import ru.creditbank.creditservice.operation.dto.internal.CreateLoanResponseDTO;
-import ru.creditbank.creditservice.operation.dto.publisher.CreditApprovedEventDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -14,22 +15,29 @@ public class LoanIssuanceSagaOrchestrator {
 
   private final LoanManagementClient loanManagementClient;
 
-  public void createLoanAndSchedule(CreditApprovedEventDTO event) {
+  public void createLoanAndSchedule(
+      UUID creditApplicationId,
+      UUID userId,
+      BigDecimal totalAmount,
+      Integer termMonths,
+      BigDecimal interestRate,
+      String accessToken
+  ) {
     CreateLoanResponseDTO loan =
         loanManagementClient.createLoan(
             new CreateLoanRequestDTO(
-                event.creditApplicationId(),
-                event.userId(),
-                event.totalAmount(),
-                event.termMonths(),
-                event.interestRate(),
-                event.accessToken()
+                creditApplicationId,
+                userId,
+                totalAmount,
+                termMonths,
+                interestRate,
+                accessToken
             )
         );
 
     loanManagementClient.createSchedule(
         loan.loanId(),
-        event.accessToken()
+        accessToken
     );
   }
 

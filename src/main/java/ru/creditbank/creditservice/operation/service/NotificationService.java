@@ -54,7 +54,7 @@ public class NotificationService {
     mailSender.send(message);
 
     log.info(
-        "Email notification sent, applicationId = {}, recipient = {}",
+        "Email notification sent, userId = {}, recipient = {}",
         applicationId,
         recipientEmail
     );
