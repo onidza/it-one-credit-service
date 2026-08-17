@@ -1,9 +1,9 @@
-package ru.creditbank.creditservice.operation.dto.publisher;
+package ru.creditbank.creditservice.operation.dto.outbox;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record CreditApprovedEventDTO(
+public record LoanIssuancePayloadDTO(
     UUID creditApplicationId,
     UUID userId,
     BigDecimal totalAmount,

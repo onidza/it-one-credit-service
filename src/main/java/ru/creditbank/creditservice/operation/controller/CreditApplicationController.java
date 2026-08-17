@@ -19,7 +19,7 @@ import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRe
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationResponseDTO;
 import ru.creditbank.creditservice.operation.dto.details.CreditApplicationDetailsDTO;
 import ru.creditbank.creditservice.operation.dto.status.StatusUpdateRequestDTO;
-import ru.creditbank.creditservice.operation.service.CreditCreateService;
+import ru.creditbank.creditservice.operation.service.CreditService;
 
 @Slf4j
 @RestController
@@ -27,7 +27,7 @@ import ru.creditbank.creditservice.operation.service.CreditCreateService;
 @RequestMapping("/credit-service/api/v1")
 public class CreditApplicationController {
 
-  private final CreditCreateService creditCreateService;
+  private final CreditService creditService;
 
   @PostMapping("/credit")
   public ResponseEntity<CreditApplicationResponseDTO> createApplication(
@@ -42,7 +42,7 @@ public class CreditApplicationController {
 
     String email = accessToken.getSubject();
 
-    CreditApplicationResponseDTO response = creditCreateService
+    CreditApplicationResponseDTO response = creditService
         .createApplication(
             request,
             userId,
@@ -58,7 +58,7 @@ public class CreditApplicationController {
       @PathVariable UUID id
   ) {
     log.info("Received request for application details with application id = {}", id);
-    CreditApplicationDetailsDTO details = creditCreateService.getApplicationDetailsById(id);
+    CreditApplicationDetailsDTO details = creditService.getApplicationDetailsById(id);
 
     return ResponseEntity.ok(details);
   }
@@ -72,7 +72,7 @@ public class CreditApplicationController {
     log.info("Received request for application id = {}, setting a new status = {}",
         id, request.status());
 
-    creditCreateService.changeStatusByApplicationId(
+    creditService.changeStatusManuallyByApplicationId(
         id,
         request,
         jwt.getTokenValue()

@@ -14,7 +14,7 @@ import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRe
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
 import ru.creditbank.creditservice.operation.entity.Status;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
-import ru.creditbank.creditservice.operation.service.CreditCreateService;
+import ru.creditbank.creditservice.operation.service.CreditService;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
@@ -22,7 +22,7 @@ import ru.creditbank.creditservice.operation.service.CreditCreateService;
 class CreditApplicationServiceIntegrationTest {
 
   @Autowired
-  private CreditCreateService creditCreateService;
+  private CreditService creditService;
 
   @Autowired
   private CreditRepository creditRepository;
@@ -39,7 +39,7 @@ class CreditApplicationServiceIntegrationTest {
         );
 
     CreditApplicationResponseDTO response =
-        creditCreateService.createApplication(
+        creditService.createApplication(
             request,
             userId,
             "example@gmail.com",

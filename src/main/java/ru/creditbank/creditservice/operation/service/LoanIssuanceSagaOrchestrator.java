@@ -14,6 +14,7 @@ import ru.creditbank.creditservice.operation.dto.internal.CreateLoanResponseDTO;
 public class LoanIssuanceSagaOrchestrator {
 
   private final LoanManagementClient loanManagementClient;
+  private final CreditService creditService;
 
   public void createLoanAndSchedule(
       UUID creditApplicationId,
@@ -39,6 +40,7 @@ public class LoanIssuanceSagaOrchestrator {
         loan.loanId(),
         accessToken
     );
-  }
 
+    creditService.markApproved(creditApplicationId);
+  }
 }

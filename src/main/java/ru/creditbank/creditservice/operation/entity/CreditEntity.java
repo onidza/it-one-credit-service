@@ -105,7 +105,7 @@ public class CreditEntity {
       String managerComment,
       BigDecimal interestRate
   ) {
-    if (newStatus == Status.APPROVED) {
+    if (newStatus == Status.APPROVING) {
       if (interestRate == null || interestRate.signum() <= 0) {
         throw new InvalidStatusUpdateApprovedException();
       }
@@ -120,5 +120,13 @@ public class CreditEntity {
     this.managerComment = managerComment == null
         ? null
         : managerComment.strip();
+  }
+
+  public void activate(
+      Status approving,
+      BigDecimal interestRate
+  ) {
+    this.status = approving;
+    this.interestRate = interestRate;
   }
 }

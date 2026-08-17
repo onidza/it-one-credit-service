@@ -1,9 +1,9 @@
-package ru.creditbank.creditservice.operation.dto.publisher;
+package ru.creditbank.creditservice.operation.dto.outbox;
 
 import java.util.UUID;
 import ru.creditbank.creditservice.operation.entity.Status;
 
-public record CreditStatusChangedEventDTO(
+public record CreditStatusChangedPayloadDTO(
     String email,
     String fullName,
     UUID applicationId,

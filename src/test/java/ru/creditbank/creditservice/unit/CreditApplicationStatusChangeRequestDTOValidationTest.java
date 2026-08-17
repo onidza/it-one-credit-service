@@ -28,7 +28,7 @@ class CreditApplicationStatusChangeRequestDTOValidationTest {
   @Test
   void shouldPassValidationForValidInterestRate() {
     StatusUpdateRequestDTO request = new StatusUpdateRequestDTO(
-        UpdateStatusDTO.APPROVED,
+        UpdateStatusDTO.APPROVING,
         "Заявка одобрена",
         new BigDecimal("15.30")
     );
@@ -60,7 +60,7 @@ class CreditApplicationStatusChangeRequestDTOValidationTest {
   void shouldFailWhenCommentIsTooLong() {
     StatusUpdateRequestDTO request =
         new StatusUpdateRequestDTO(
-            UpdateStatusDTO.APPROVED,
+            UpdateStatusDTO.APPROVING,
             "a".repeat(501),
             new BigDecimal("15.5")
         );
@@ -81,7 +81,7 @@ class CreditApplicationStatusChangeRequestDTOValidationTest {
   })
   void shouldFailWhenInterestRateIsInvalid(String interestRate) {
     StatusUpdateRequestDTO request = new StatusUpdateRequestDTO(
-        UpdateStatusDTO.APPROVED,
+        UpdateStatusDTO.APPROVING,
         "Заявка одобрена",
         new BigDecimal(interestRate)
     );

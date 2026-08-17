@@ -1,18 +1,22 @@
 package ru.creditbank.creditservice.operation.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.creditbank.creditservice.operation.dto.publisher.CreditApprovedEventDTO;
-import ru.creditbank.creditservice.operation.dto.publisher.CreditStatusChangedEventDTO;
+import ru.creditbank.creditservice.operation.dto.outbox.LoanIssuancePayloadDTO;
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
+import ru.creditbank.creditservice.operation.entity.OutboxEventEntity;
+import ru.creditbank.creditservice.operation.entity.OutboxEventType;
 import ru.creditbank.creditservice.operation.entity.Status;
 import ru.creditbank.creditservice.operation.exception.CreditApplicationNotFoundException;
+import ru.creditbank.creditservice.operation.exception.OutboxSerializationException;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
+import ru.creditbank.creditservice.operation.repository.OutboxRepository;
 
 @Service
 @Slf4j
@@ -20,7 +24,8 @@ import ru.creditbank.creditservice.operation.repository.CreditRepository;
 public class CreditDecisionTransactionService {
 
   private final CreditRepository creditRepository;
-  private final ApplicationEventPublisher eventPublisher;
+  private final OutboxRepository outboxRepository;
+  private final ObjectMapper objectMapper;
 
   @Transactional(rollbackFor = Exception.class)
   public void approveAutomatically(
@@ -35,32 +40,41 @@ public class CreditDecisionTransactionService {
       return;
     }
 
-    application.setStatus(Status.APPROVED);
-    application.setInterestRate(interestRate);
+    application.activate(Status.APPROVING, interestRate);
 
     log.info(
-        "Credit application = {} automatically approved",
+        "Credit application = {} now has a new status: approving",
         applicationId
     );
 
-    eventPublisher.publishEvent(
-        new CreditStatusChangedEventDTO(
-            application.getUserEmail(),
-            application.getUserFullName(),
-            applicationId,
-            application.getStatus(),
-            application.getManagerComment()
+    LoanIssuancePayloadDTO payload = new LoanIssuancePayloadDTO(
+        application.getId(),
+        application.getUserId(),
+        application.getRequestedAmount(),
+        application.getTermMonths(),
+        application.getInterestRate(),
+        accessToken
+    );
+
+    outboxRepository.save(
+        new OutboxEventEntity(
+            application.getId(),
+            OutboxEventType.LOAN_ISSUANCE,
+            serializePayload(payload)
         )
     );
 
-    eventPublisher.publishEvent(new CreditApprovedEventDTO(
-            applicationId,
-            application.getUserId(),
-            application.getRequestedAmount(),
-            application.getTermMonths(),
-            application.getInterestRate(),
-            accessToken
-        )
+    log.info(
+        "Loan issuance outbox event created, applicationId = {}",
+        applicationId
     );
+  }
+
+  private String serializePayload(Object payload) {
+    try {
+      return objectMapper.writeValueAsString(payload);
+    } catch (JsonProcessingException ex) {
+      throw new OutboxSerializationException(ex);
+    }
   }
 }
