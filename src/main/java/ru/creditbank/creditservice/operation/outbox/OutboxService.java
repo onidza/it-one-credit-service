@@ -26,7 +26,7 @@ public class OutboxService {
         outboxRepository.findById(eventId)
             .orElseThrow();
 
-    event.markProcessed(clock.instant());
+    event.markProcessed();
   }
 
   @Transactional
