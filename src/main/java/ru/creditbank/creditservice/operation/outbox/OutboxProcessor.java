@@ -33,10 +33,16 @@ public class OutboxProcessor {
         case LOAN_ISSUANCE ->
             processLoanIssuance(event);
         case CREDIT_STATUS_CHANGED ->
-          processNotification(event);
+          processStatusChangeNotification(event);
       }
 
       outboxService.markProcessed(event.getId());
+
+      log.info(
+          "Outbox event was marked processed, type = {}, event id = {}",
+          event.getEventType().name(),
+          event.getAggregateId()
+          );
 
     } catch (Exception ex) {
       log.error(
@@ -92,7 +98,7 @@ public class OutboxProcessor {
     );
   }
 
-  public void processNotification(
+  public void processStatusChangeNotification(
       OutboxEventEntity event
   ) throws JsonProcessingException {
     CreditStatusChangedPayloadDTO payload =

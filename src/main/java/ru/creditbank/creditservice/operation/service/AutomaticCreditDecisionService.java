@@ -20,8 +20,8 @@ public class AutomaticCreditDecisionService {
   private static final BigDecimal AUTOMATIC_INTEREST_RATE = new BigDecimal("15.00");
 
   public void processApplication(
-      UUID userId,
       UUID applicationId,
+      UUID userId,
       BigDecimal requestedAmount,
       String accessToken
   ) {
@@ -48,6 +48,12 @@ public class AutomaticCreditDecisionService {
         applicationId,
         AUTOMATIC_INTEREST_RATE,
         accessToken
+    );
+
+    log.info(
+        "Application id was approved automatically, application id = {}, user id = {}",
+        applicationId,
+        userId
     );
   }
 }

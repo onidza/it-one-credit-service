@@ -17,7 +17,7 @@ public class LoanIssuanceSagaOrchestrator {
   private final CreditService creditService;
 
   public void createLoanAndSchedule(
-      UUID creditApplicationId,
+      UUID applicationId,
       UUID userId,
       BigDecimal totalAmount,
       Integer termMonths,
@@ -27,7 +27,7 @@ public class LoanIssuanceSagaOrchestrator {
     CreateLoanResponseDTO loan =
         loanManagementClient.createLoan(
             new CreateLoanRequestDTO(
-                creditApplicationId,
+                applicationId,
                 userId,
                 totalAmount,
                 termMonths,
@@ -36,11 +36,21 @@ public class LoanIssuanceSagaOrchestrator {
             )
         );
 
+    log.info(
+        "Loan was created, application id = {}, loan id = {}",
+        applicationId,
+        loan.loanId()
+    );
+
     loanManagementClient.createSchedule(
         loan.loanId(),
         accessToken
     );
 
-    creditService.markApproved(creditApplicationId);
+    log.info("Schedule for loan was created");
+
+    creditService.markApproved(applicationId);
+
+    log.info("Credit application = {} was approved", applicationId);
   }
 }

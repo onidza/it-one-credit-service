@@ -19,14 +19,23 @@ public class OutboxScheduler {
 
   @Scheduled(fixedDelay = 5000)
   public void processLoanIssuanceOutbox() {
-    List<OutboxEventEntity> events = outboxService.findReadyForProcessing(
-        OutboxStatus.PENDING,
-        OutboxStatus.RETRY,
-        Instant.now()
-    );
+    while (true) {
+      List<OutboxEventEntity> events =
+          outboxService.findReadyForProcessing(
+              OutboxStatus.PENDING,
+              OutboxStatus.RETRY,
+              Instant.now()
+          );
 
-    for (OutboxEventEntity event : events) {
-      outboxProcessor.process(event);
+      if (events.isEmpty()) {
+        return;
+      }
+
+      log.info("Starting processing outbox events batch, size = {}", events.size());
+
+      for (OutboxEventEntity event : events) {
+        outboxProcessor.process(event);
+      }
     }
   }
 }

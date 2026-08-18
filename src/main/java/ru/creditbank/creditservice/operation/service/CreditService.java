@@ -83,6 +83,11 @@ public class CreditService {
         )
     );
 
+    log.info(
+        "Automatic credit decision outbox event created, applicationId = {}",
+        application.getId()
+    );
+
     return new CreditApplicationResponseDTO(
         application.getId(),
         application.getStatus(),
@@ -139,7 +144,7 @@ public class CreditService {
         applicationId
     );
 
-    if (application.getStatus() == Status.APPROVED) {
+    if (application.getStatus() == Status.APPROVING) {
       LoanIssuancePayloadDTO payload = new LoanIssuancePayloadDTO(
           application.getId(),
           application.getUserId(),
@@ -195,6 +200,11 @@ public class CreditService {
             OutboxEventType.CREDIT_STATUS_CHANGED,
             serializePayload(payload)
         )
+    );
+
+    log.info(
+        "Credit status changed outbox event created, applicationId = {}",
+        application.getId()
     );
   }
 

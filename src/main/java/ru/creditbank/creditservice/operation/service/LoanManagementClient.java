@@ -37,8 +37,6 @@ public class LoanManagementClient {
         .toBodilessEntity();
   }
 
-  // auth token added in branch 'task-5'
-
   public CreditProfileDTO getCreditProfile(
       UUID userId,
       String accessToken
