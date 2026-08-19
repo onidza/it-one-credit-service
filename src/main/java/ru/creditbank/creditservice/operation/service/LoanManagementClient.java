@@ -1,5 +1,7 @@
 package ru.creditbank.creditservice.operation.service;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,8 @@ public class LoanManagementClient {
 
   private final RestClient loanManagementRestClient;
 
+  @CircuitBreaker(name = "loanManagement")
+  @Retry(name = "loanManagement")
   public CreateLoanResponseDTO createLoan(CreateLoanRequestDTO request) {
     return Objects.requireNonNull(
         loanManagementRestClient.post()
@@ -29,6 +33,8 @@ public class LoanManagementClient {
     );
   }
 
+  @CircuitBreaker(name = "loanManagement")
+  @Retry(name = "loanManagement")
   public void createSchedule(UUID loanId, String accessToken) {
     loanManagementRestClient.post()
         .uri("/loan-management-service/internal/api/v1/loans/{loanId}/schedule", loanId)
@@ -37,6 +43,8 @@ public class LoanManagementClient {
         .toBodilessEntity();
   }
 
+  @CircuitBreaker(name = "loanManagement")
+  @Retry(name = "loanManagement")
   public CreditProfileDTO getCreditProfile(
       UUID userId,
       String accessToken
