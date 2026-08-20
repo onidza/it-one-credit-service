@@ -1,10 +1,6 @@
 package ru.creditbank.creditservice.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -14,38 +10,36 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 import ru.creditbank.creditservice.config.TestcontainersConfiguration;
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
+import ru.creditbank.creditservice.operation.entity.OutboxEventEntity;
+import ru.creditbank.creditservice.operation.entity.OutboxEventType;
+import ru.creditbank.creditservice.operation.entity.OutboxStatus;
 import ru.creditbank.creditservice.operation.entity.Status;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
+import ru.creditbank.creditservice.operation.repository.OutboxRepository;
 import ru.creditbank.creditservice.operation.service.CreditDecisionTransactionService;
-import ru.creditbank.creditservice.operation.service.LoanIssuanceSagaOrchestrator;
-import ru.creditbank.creditservice.operation.service.NotificationService;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
+@Transactional
 class AutomaticCreditDecisionIntegrationTest {
 
   @Autowired
   private CreditRepository creditRepository;
 
   @Autowired
+  private OutboxRepository outboxRepository;
+
+  @Autowired
   private CreditDecisionTransactionService transactionService;
-
-  @MockitoBean
-  private NotificationService notificationService;
-
-  @MockitoBean
-  private LoanIssuanceSagaOrchestrator sagaOrchestrator;
 
   @PersistenceContext
   private EntityManager entityManager;
 
-  @Transactional
   @Test
-  void shouldUpdateApplicationStatusInDatabaseAfterAutomaticApproval() {
+  void shouldSetApprovingStatusAndCreateLoanIssuanceOutbox() {
     UUID userId = UUID.randomUUID();
 
     CreditEntity application = new CreditEntity(
@@ -69,44 +63,28 @@ class AutomaticCreditDecisionIntegrationTest {
     entityManager.flush();
     entityManager.clear();
 
-    CreditEntity updated = creditRepository.findById(applicationId)
-        .orElseThrow();
-    assertThat(updated.getStatus())
-        .isEqualTo(Status.APPROVED);
-  }
+    CreditEntity updatedApplication =
+        creditRepository.findById(applicationId)
+            .orElseThrow();
 
-  @Test
-  void shouldNotifyUserAfterAutomaticApproval() {
-    UUID userId = UUID.randomUUID();
+    assertThat(updatedApplication.getStatus())
+        .isEqualTo(Status.APPROVING);
 
-    String email = "ivan@test.com";
-    String fullName = "Ivan Ivanov";
+    OutboxEventEntity outboxEvent =
+        outboxRepository
+            .findFirstByAggregateIdAndEventTypeOrderByCreatedAtDesc(
+                applicationId,
+                OutboxEventType.LOAN_ISSUANCE
+            )
+            .orElseThrow();
 
-    CreditEntity application = new CreditEntity(
-        userId,
-        fullName,
-        email,
-        new BigDecimal("100000"),
-        12
-    );
+    assertThat(outboxEvent.getAggregateId())
+        .isEqualTo(applicationId);
 
-    application = creditRepository.save(application);
+    assertThat(outboxEvent.getEventType())
+        .isEqualTo(OutboxEventType.LOAN_ISSUANCE);
 
-    UUID applicationId = application.getId();
-
-    transactionService.approveAutomatically(
-        applicationId,
-        new BigDecimal("15.00"),
-        "test-access-token"
-    );
-
-    verify(notificationService, timeout(3000))
-        .sendStatusChangedEmail(
-            eq(email),
-            eq(fullName),
-            eq(applicationId),
-            eq(Status.APPROVED),
-            isNull()
-        );
+    assertThat(outboxEvent.getStatus())
+        .isEqualTo(OutboxStatus.PENDING);
   }
 }

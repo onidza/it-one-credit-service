@@ -45,8 +45,8 @@ class AutomaticCreditDecisionServiceTest {
         .thenReturn(profile);
 
     decisionService.processApplication(
-        userId,
         applicationId,
+        userId,
         new BigDecimal("100000"),
         ACCESS_TOKEN
     );
@@ -74,8 +74,8 @@ class AutomaticCreditDecisionServiceTest {
         .thenReturn(profile);
 
     decisionService.processApplication(
-        userId,
         applicationId,
+        userId,
         new BigDecimal("100000"),
         ACCESS_TOKEN
     );
@@ -103,8 +103,8 @@ class AutomaticCreditDecisionServiceTest {
         .thenReturn(profile);
 
     decisionService.processApplication(
-        userId,
         applicationId,
+        userId,
         new BigDecimal("100001"),
         ACCESS_TOKEN
     );
@@ -132,8 +132,8 @@ class AutomaticCreditDecisionServiceTest {
         .thenReturn(profile);
 
     decisionService.processApplication(
-        userId,
         applicationId,
+        userId,
         new BigDecimal("200000"),
         ACCESS_TOKEN
     );

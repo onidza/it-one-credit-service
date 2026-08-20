@@ -28,12 +28,9 @@ public class OutboxProcessor {
   public void process(OutboxEventEntity event) {
     try {
       switch (event.getEventType()) {
-        case AUTOMATIC_CREDIT_DECISION ->
-            processAutomaticCreditDecision(event);
-        case LOAN_ISSUANCE ->
-            processLoanIssuance(event);
-        case CREDIT_STATUS_CHANGED ->
-          processStatusChangeNotification(event);
+        case AUTOMATIC_CREDIT_DECISION -> processAutomaticCreditDecision(event);
+        case LOAN_ISSUANCE -> processLoanIssuance(event);
+        case CREDIT_STATUS_CHANGED -> processStatusChangeNotification(event);
       }
 
       outboxService.markProcessed(event.getId());
@@ -42,7 +39,7 @@ public class OutboxProcessor {
           "Outbox event was marked processed, type = {}, event id = {}",
           event.getEventType().name(),
           event.getAggregateId()
-          );
+      );
 
     } catch (Exception ex) {
       log.error(

@@ -2,11 +2,13 @@ package ru.creditbank.creditservice.operation.repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.creditbank.creditservice.operation.entity.OutboxEventEntity;
+import ru.creditbank.creditservice.operation.entity.OutboxEventType;
 import ru.creditbank.creditservice.operation.entity.OutboxStatus;
 
 @Repository
@@ -23,5 +25,10 @@ public interface OutboxRepository extends JpaRepository<OutboxEventEntity, UUID>
       OutboxStatus pending,
       OutboxStatus retry,
       Instant now
+  );
+
+  Optional<OutboxEventEntity> findFirstByAggregateIdAndEventTypeOrderByCreatedAtDesc(
+      UUID aggregateId,
+      OutboxEventType eventType
   );
 }
