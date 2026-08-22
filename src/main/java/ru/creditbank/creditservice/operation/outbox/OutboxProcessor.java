@@ -2,8 +2,12 @@ package ru.creditbank.creditservice.operation.outbox;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.creditbank.creditservice.operation.dto.outbox.AutomaticCreditDecisionPayloadDTO;
 import ru.creditbank.creditservice.operation.dto.outbox.CreditStatusChangedPayloadDTO;
@@ -25,8 +29,18 @@ public class OutboxProcessor {
   private final AutomaticCreditDecisionService decisionService;
   private final NotificationService notificationService;
 
+  @Value("${spring.application.name}")
+  private String serviceName;
+
   public void process(OutboxEventEntity event) {
     try {
+      MDC.put("spanId", UUID.randomUUID().toString());
+      MDC.put("traceId", Objects.requireNonNull(
+          event.getTraceId(),
+          "Outbox event traceId must not be null"
+      ));
+      MDC.put("service-name", serviceName);
+
       switch (event.getEventType()) {
         case AUTOMATIC_CREDIT_DECISION -> processAutomaticCreditDecision(event);
         case LOAN_ISSUANCE -> processLoanIssuance(event);
@@ -54,6 +68,8 @@ public class OutboxProcessor {
           event.getId(),
           ex.getMessage()
       );
+    } finally {
+      MDC.clear();
     }
   }
 

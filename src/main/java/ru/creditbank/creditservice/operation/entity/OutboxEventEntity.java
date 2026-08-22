@@ -89,16 +89,21 @@ public class OutboxEventEntity {
   @Version
   private Long version;
 
+  @Column(name = "trace_id", nullable = false)
+  private String traceId;
+
   public OutboxEventEntity(
       UUID aggregateId,
       OutboxEventType eventType,
-      String payload
+      String payload,
+      String traceId
   ) {
     this.aggregateId = aggregateId;
     this.eventType = eventType;
     this.payload = payload;
     this.status = OutboxStatus.PENDING;
     this.attemptCount = 0;
+    this.traceId = traceId;
   }
 
   public void markProcessed() {

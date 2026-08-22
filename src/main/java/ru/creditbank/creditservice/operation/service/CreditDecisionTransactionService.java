@@ -3,9 +3,11 @@ package ru.creditbank.creditservice.operation.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.creditbank.creditservice.operation.dto.outbox.LoanIssuancePayloadDTO;
@@ -60,7 +62,12 @@ public class CreditDecisionTransactionService {
         new OutboxEventEntity(
             application.getId(),
             OutboxEventType.LOAN_ISSUANCE,
-            serializePayload(payload)
+            serializePayload(payload),
+
+            Objects.requireNonNull(
+                MDC.get("traceId"),
+                "traceId must be present in MDC when creating outbox event"
+            )
         )
     );
 
