@@ -153,6 +153,7 @@
       <version>8.1</version>
     </dependency>
   </dependencies>
+
   <description>Credit application management service</description>
   <groupId>ru.creditbank</groupId>
 

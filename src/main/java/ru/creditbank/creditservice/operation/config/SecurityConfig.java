@@ -45,6 +45,8 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.PATCH, "/credit-service/api/v1/credit/{id}/status")
             .hasRole("CREDIT_MANAGER")
 
+            .requestMatchers("/actuator/health").permitAll()
+
             .anyRequest().denyAll()
         )
 
