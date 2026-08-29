@@ -1,0 +1,40 @@
+curl http://localhost:8083/connectors
+
+curl.exe -X POST http://localhost:8083/connectors `
+  -H "Content-Type: application/json" `
+  --data "@infra/kafka-connect/connector/credit-service-connector.json"
+
+Invoke-RestMethod http://localhost:8083/connectors/credit-service-connector/status |
+    ConvertTo-Json -Depth 10
+
+--------------------------------
+update config->
+
+$body = (
+  Get-Content "infra/kafka-connect/connector/credit-service-connector.json" -Raw |
+  ConvertFrom-Json
+).config | ConvertTo-Json -Depth 20
+
+Invoke-RestMethod `
+  -Method Put `
+  -Uri "http://localhost:8083/connectors/credit-service-connector/config" `
+  -ContentType "application/json" `
+  -Body $body
+
+-------------------------------
+topic create check->
+
+docker exec kafka /opt/kafka/bin/kafka-topics.sh `
+  --bootstrap-server kafka:9092 `
+  --list
+
+event reading check->
+
+docker exec kafka /opt/kafka/bin/kafka-console-consumer.sh `
+  --bootstrap-server kafka:9092 `
+  --topic credit.events `
+  --from-beginning `
+  --max-messages 1 |
+ForEach-Object {
+  $_ | ConvertFrom-Json | ConvertTo-Json -Depth 20
+}
