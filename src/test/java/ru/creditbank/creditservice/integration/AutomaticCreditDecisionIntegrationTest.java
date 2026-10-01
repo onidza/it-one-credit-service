@@ -6,10 +6,14 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ru.creditbank.creditservice.config.TestcontainersConfiguration;
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
@@ -20,7 +24,7 @@ import ru.creditbank.creditservice.operation.entity.Status;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
 import ru.creditbank.creditservice.operation.repository.OutboxRepository;
 import ru.creditbank.creditservice.operation.service.CreditDecisionTransactionService;
-
+@ActiveProfiles("test")
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 @Transactional
@@ -37,6 +41,16 @@ class AutomaticCreditDecisionIntegrationTest {
 
   @PersistenceContext
   private EntityManager entityManager;
+
+  @BeforeEach
+  void setUpTraceId() {
+    MDC.put("traceId", "test-trace-id");
+  }
+
+  @AfterEach
+  void clearMdc() {
+    MDC.clear();
+  }
 
   @Test
   void shouldSetApprovingStatusAndCreateLoanIssuanceOutbox() {

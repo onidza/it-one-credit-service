@@ -2,11 +2,15 @@ package ru.creditbank.creditservice.integration;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ru.creditbank.creditservice.config.TestcontainersConfiguration;
 import ru.creditbank.creditservice.operation.dto.application.CreditApplicationRequestDTO;
@@ -16,8 +20,9 @@ import ru.creditbank.creditservice.operation.entity.Status;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
 import ru.creditbank.creditservice.operation.service.CreditService;
 
-@Import(TestcontainersConfiguration.class)
+@ActiveProfiles("test")
 @SpringBootTest
+@Import(TestcontainersConfiguration.class)
 @Transactional
 class CreditApplicationServiceIntegrationTest {
 
@@ -26,6 +31,16 @@ class CreditApplicationServiceIntegrationTest {
 
   @Autowired
   private CreditRepository creditRepository;
+
+  @BeforeEach
+  void setUpTraceId() {
+    MDC.put("traceId", "test-trace-id");
+  }
+
+  @AfterEach
+  void clearMdc() {
+    MDC.clear();
+  }
 
   @Test
   void shouldSaveCreditApplication() {

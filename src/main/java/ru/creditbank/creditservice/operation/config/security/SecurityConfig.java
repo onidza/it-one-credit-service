@@ -1,4 +1,4 @@
-package ru.creditbank.creditservice.operation.config;
+package ru.creditbank.creditservice.operation.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

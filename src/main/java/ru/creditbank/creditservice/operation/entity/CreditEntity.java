@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import ru.creditbank.creditservice.operation.exception.InvalidStatusUpdateApprovedException;
+import ru.creditbank.creditservice.operation.exception.rest.InvalidStatusUpdateApprovedException;
 
 @Entity
 @Table(name = "credit_operation")

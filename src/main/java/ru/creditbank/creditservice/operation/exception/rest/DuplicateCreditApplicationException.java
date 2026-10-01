@@ -1,4 +1,4 @@
-package ru.creditbank.creditservice.operation.exception;
+package ru.creditbank.creditservice.operation.exception.rest;
 
 import org.springframework.http.HttpStatus;
 

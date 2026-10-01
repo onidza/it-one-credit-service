@@ -23,10 +23,10 @@ import ru.creditbank.creditservice.operation.entity.CreditEntity;
 import ru.creditbank.creditservice.operation.entity.OutboxEventEntity;
 import ru.creditbank.creditservice.operation.entity.OutboxEventType;
 import ru.creditbank.creditservice.operation.entity.Status;
-import ru.creditbank.creditservice.operation.exception.CreditApplicationNotFoundException;
-import ru.creditbank.creditservice.operation.exception.DuplicateCreditApplicationException;
-import ru.creditbank.creditservice.operation.exception.InvalidStatusUpdateException;
-import ru.creditbank.creditservice.operation.exception.OutboxSerializationException;
+import ru.creditbank.creditservice.operation.exception.rest.CreditApplicationNotFoundException;
+import ru.creditbank.creditservice.operation.exception.rest.DuplicateCreditApplicationException;
+import ru.creditbank.creditservice.operation.exception.rest.InvalidStatusUpdateException;
+import ru.creditbank.creditservice.operation.exception.rest.OutboxSerializationException;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
 import ru.creditbank.creditservice.operation.repository.OutboxRepository;
 

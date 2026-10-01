@@ -1,4 +1,4 @@
-package ru.creditbank.creditservice.operation.controller;
+package ru.creditbank.creditservice.operation.controller.rest;
 
 import jakarta.validation.Valid;
 import java.util.Objects;

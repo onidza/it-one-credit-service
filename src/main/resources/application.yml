@@ -32,6 +32,10 @@ spring:
         jdbc:
           batch_size: 50
 
+  grpc:
+    server:
+      port: 9091
+
 logging:
   level:
     org.springframework.security: DEBUG

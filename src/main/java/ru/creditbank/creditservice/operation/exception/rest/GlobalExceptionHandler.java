@@ -1,4 +1,4 @@
-package ru.creditbank.creditservice.operation.exception;
+package ru.creditbank.creditservice.operation.exception.rest;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;

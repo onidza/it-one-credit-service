@@ -14,12 +14,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import ru.creditbank.creditservice.config.TestcontainersConfiguration;
 import ru.creditbank.creditservice.operation.entity.CreditEntity;
 import ru.creditbank.creditservice.operation.repository.CreditRepository;
 
+@ActiveProfiles("test")
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
 @AutoConfigureMockMvc
