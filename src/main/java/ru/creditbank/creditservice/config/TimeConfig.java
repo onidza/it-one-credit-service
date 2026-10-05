@@ -1,4 +1,4 @@
-package ru.creditbank.creditservice.operation.config;
+package ru.creditbank.creditservice.config;
 
 import java.time.Clock;
 import org.springframework.context.annotation.Bean;

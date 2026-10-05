@@ -5,6 +5,11 @@ spring:
   application:
     name: credit-service
 
+  datasource:
+    url: jdbc:postgresql://localhost:5433/postgres
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+
   mail:
     host: ${SPRING_MAIL_HOST:smtp.mail.ru}
     port: ${SPRING_MAIL_PORT:465}
@@ -70,3 +75,13 @@ resilience4j:
         wait-duration-in-open-state: 10s
         permitted-number-of-calls-in-half-open-state: 2
         automatic-transition-from-open-to-half-open-enabled: true
+
+s3:
+  endpoint: http://localhost:9000
+  access-key: admin
+  secret-key: password123
+  region: eu-central-1
+  bucket: credit-files
+
+file:
+  presigned-url-ttl: 10m

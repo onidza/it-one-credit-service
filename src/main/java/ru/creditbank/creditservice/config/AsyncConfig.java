@@ -1,4 +1,4 @@
-package ru.creditbank.creditservice.operation.config;
+package ru.creditbank.creditservice.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;

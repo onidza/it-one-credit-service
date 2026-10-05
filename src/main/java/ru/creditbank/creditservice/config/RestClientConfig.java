@@ -1,4 +1,4 @@
-package ru.creditbank.creditservice.operation.config;
+package ru.creditbank.creditservice.config;
 
 import java.time.Duration;
 import org.slf4j.MDC;

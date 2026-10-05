@@ -189,6 +189,11 @@
       <artifactId>protobuf-java</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>s3</artifactId>
+      <version>2.50.2</version>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>

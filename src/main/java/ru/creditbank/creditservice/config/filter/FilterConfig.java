@@ -1,4 +1,4 @@
-package ru.creditbank.creditservice.operation.config.filter;
+package ru.creditbank.creditservice.config.filter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;

@@ -1,11 +1,11 @@
 services:
   postgres:
     image: 'postgres:18'
+    container_name: postgres
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres #.env
       POSTGRES_PASSWORD: postgres #.env
-
     command:
       - postgres
       - -c
@@ -14,11 +14,29 @@ services:
       - max_wal_senders=10
       - -c
       - max_replication_slots=10
-
     ports:
       - '5433:5432'
     volumes:
       - postgres_data:/var/lib/postgresql
 
+  rustfs:
+    image: rustfs/rustfs:1.0.0
+    container_name: rustfs
+
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+    environment:
+      RUSTFS_ACCESS_KEY: admin
+      RUSTFS_SECRET_KEY: password123
+      RUSTFS_ADDRESS: "0.0.0.0:9000"
+      RUSTFS_CONSOLE_ADDRESS: "0.0.0.0:9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
+
+    volumes:
+      - rustfs_data:/data
+
 volumes:
   postgres_data:
+  rustfs_data:

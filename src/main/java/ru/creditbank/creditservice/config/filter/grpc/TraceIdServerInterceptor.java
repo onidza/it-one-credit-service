@@ -1,4 +1,4 @@
-package ru.creditbank.creditservice.operation.config.filter.grpc;
+package ru.creditbank.creditservice.config.filter.grpc;
 
 import io.grpc.ForwardingServerCallListener;
 import io.grpc.Metadata;
